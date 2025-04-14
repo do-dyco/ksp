@@ -55,7 +55,7 @@ class PinjamanResource extends Resource
 
     protected static ?string $label = "Loan";
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
     protected static function hitungTotalAngsuran($set, $state)
     {
@@ -72,14 +72,7 @@ class PinjamanResource extends Resource
         }
     }
 
-    public static function created($record)
-    {
-        $approver = User::find($record->penanggung_jawab_id);
 
-        if ($approver && !$approver->hasRole('approver_level_1')) {
-            $approver->assignRole('approver_level_1');
-        }
-    }
 
     public static function form(Form $form): Form
     {
@@ -214,15 +207,17 @@ class PinjamanResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                ->visible(fn ($record) => $record->is_approve < 0),
+                Tables\Actions\DeleteAction::make()
+                ->visible(fn ($record) => $record->is_approve < 0),
 
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
+            // ->bulkActions([
+            //     Tables\Actions\BulkActionGroup::make([
+            //         Tables\Actions\DeleteBulkAction::make(),
+            //     ]),
+            // ]);
     }
 
     public static function getRelations(): array

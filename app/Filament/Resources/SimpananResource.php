@@ -37,7 +37,7 @@ class SimpananResource extends Resource
 
     protected static ?string $label = "Saving";
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-inbox-arrow-down';
 
     public static function form(Form $form): Form
     {

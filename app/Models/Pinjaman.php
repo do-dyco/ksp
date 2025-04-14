@@ -21,6 +21,10 @@ class Pinjaman extends Model
         'penanggung_jawab',
         'is_approve',
         'status',
+        'id_penanggung',
+        'id_atasan',
+        'id_bendahara',
+        'id_admin',
     ];
     protected $guarded = [];
 

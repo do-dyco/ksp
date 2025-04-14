@@ -12,6 +12,10 @@ class Approval extends Model
     protected $fillable = [
         'is_approve',
         'status',
+        'id_penanggung',
+        'id_atasan',
+        'id_bendahara',
+        'id_admin',
     ];
     // add guaded
     protected $guarded = ['id'];

@@ -15,12 +15,14 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\Pinjaman;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Facades\Auth;
+use Filament\Notifications\Notification;
 
 class ApprovalResource extends Resource
 {
     protected static ?string $model = Approval::class;
 
     protected static ?string $navigationGroup = "Transaksi";
+    protected static ?int $navigationSort = 2;
 
     public static function getEloquentQuery(): Builder
     {
@@ -31,7 +33,7 @@ class ApprovalResource extends Resource
             : parent::getEloquentQuery()->where('user_id', $user->id);
     }
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
     public static function form(Form $form): Form
     {
@@ -86,52 +88,72 @@ class ApprovalResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('confirm')
-                    ->label('Confirm')
-                    ->color('success')
-                    ->icon('heroicon-o-check')
-                    ->requiresConfirmation()
-                    ->visible(fn (Approval $record) => $record->status === '0')
-                    ->action(fn (Approval $record) => $record->update(['is_approve' => 1])),
+                ->label('Confirm')
+                ->color('success')
+                ->icon('heroicon-o-check')
+                ->requiresConfirmation()
+                ->visible(fn (Approval $record) => $record->is_approve === '0')
+                ->action(function (Approval $record) {
+                    $record->update([
+                        'is_approve' => 1,
+                        'id_penanggung' => auth()->id(),
+                    ]);
+                }),
 
                 Tables\Actions\Action::make('reject')
                     ->label('Reject')
                     ->color('danger')
                     ->icon('heroicon-o-x-circle')
                     ->requiresConfirmation()
-                    ->visible(fn (Approval $record) => $record->status === '0')
-                    ->action(fn (Approval $record) => $record->update(['is_approve' => 4])),
+                    ->visible(fn (Approval $record) => $record->is_approve === '0')
+                    ->action(fn (Approval $record) => $record->update([
+                        'is_approve' => 4,
+                        'id_penanggung' => auth()->id(),
+                    ])),
 
-                Tables\Actions\Action::make('confirm')
-                    ->label('Confirm')
-                    ->color('success')
-                    ->icon('heroicon-o-check')
-                    ->requiresConfirmation()
-                    ->visible(fn (Approval $record) => $record->status === '0')
-                    ->action(fn (Approval $record) => $record->update(['is_approve' => 2])),
+                // Tables\Actions\Action::make('confirm')
+                //     ->label('Confirm')
+                //     ->color('success')
+                //     ->icon('heroicon-o-check')
+                //     ->requiresConfirmation()
 
-                Tables\Actions\Action::make('reject')
-                    ->label('Reject')
-                    ->color('danger')
-                    ->icon('heroicon-o-x-circle')
-                    ->requiresConfirmation()
-                    ->visible(fn (Approval $record) => $record->status === '0')
-                    ->action(fn (Approval $record) => $record->update(['is_approve' => 5])),
+                //     ->action(fn (Approval $record) => $record->update([
+                //         'is_approve' => 2,
+                //         'id_atasan' => auth()->id()
+                //     ])),
 
-                Tables\Actions\Action::make('confirm')
-                    ->label('Confirm')
-                    ->color('success')
-                    ->icon('heroicon-o-check')
-                    ->requiresConfirmation()
-                    ->visible(fn (Approval $record) => $record->status === '0')
-                    ->action(fn (Approval $record) => $record->update(['is_approve' => 3])),
+                // Tables\Actions\Action::make('reject')
+                //     ->label('Reject')
+                //     ->color('danger')
+                //     ->icon('heroicon-o-x-circle')
+                //     ->requiresConfirmation()
 
-                Tables\Actions\Action::make('reject')
-                    ->label('Reject')
-                    ->color('danger')
-                    ->icon('heroicon-o-x-circle')
-                    ->requiresConfirmation()
-                    ->visible(fn (Approval $record) => $record->status === '0')
-                    ->action(fn (Approval $record) => $record->update(['is_approve' => 6])),
+                //     ->action(fn (Approval $record) => $record->update([
+                //         'is_approve' => 5,
+                //         'id_atasan' => auth()->id(),
+                //     ])),
+
+                // Tables\Actions\Action::make('confirm')
+                //     ->label('Confirm')
+                //     ->color('success')
+                //     ->icon('heroicon-o-check')
+                //     ->requiresConfirmation()
+
+                //     ->action(fn (Approval $record) => $record->update([
+                //         'is_approve' => 3,
+                //         'id_admin' => auth()->id(),
+                //     ])),
+
+                // Tables\Actions\Action::make('reject')
+                //     ->label('Reject')
+                //     ->color('danger')
+                //     ->icon('heroicon-o-x-circle')
+                //     ->requiresConfirmation()
+
+                //     ->action(fn (Approval $record) => $record->update([
+                //         'is_approve' => 6,
+                //         'id_admin' => auth()->id(),
+                //     ])),
 
             ])
             ->bulkActions([

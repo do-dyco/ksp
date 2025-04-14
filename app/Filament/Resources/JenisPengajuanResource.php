@@ -26,7 +26,7 @@ class JenisPengajuanResource extends Resource
 
     protected static ?string $label = "Jenis Pengajuan";
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-group';
 
     public static function form(Form $form): Form
     {
